@@ -2,7 +2,7 @@
 
 * 10И3
 * keddad@yandex.ru
-* [vk.com/lix0rte](vk.com/lix0rte)
+* [vk.com/lix0rte](https://vk.com/lix0rte)
 
 ### Название проекта
 
