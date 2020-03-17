@@ -1,0 +1,3 @@
+[submodule "facerec"]
+	path = facerec
+	url = https://github.com/keddad/facerec.git
