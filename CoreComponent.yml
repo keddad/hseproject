@@ -1,0 +1,155 @@
+openapi: 3.0.2
+info:
+  title: CoreComponent API
+  version: 0.0.1
+servers:
+  - url: core.keddad.wtf
+paths:
+  /task/addface:
+    post:
+      summary: Отправить лицо на добавление. На фото должно быть только одно лицо
+      operationId: addFaceTask
+      tags:
+        - TaskCreator
+        - FaceAddition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                face:
+                  type: string
+                  description: Base85 of file
+                traits:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/TraitInformation"
+      responses:
+        202:
+          description: Обьект успешно принят на обработку
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: ID запроса на добавление, по которому можно получить результат
+
+  /task/addface/{taskId}:
+    get:
+      summary: Получить статус запроса на добавление
+      operationId: getFaceTaskStatus
+      tags:
+        - FaceAddition
+        - TaskManager
+      parameters:
+        - in: path
+          name: taskId
+          schema:
+            type: string
+          required: true
+          description: String ID of task to fetch information about
+      responses:
+        200:
+          description: Обьект найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  state:
+                    type: string
+                    enum: [PENDING, OK, FAILED]
+                  message:
+                    type: string
+                    description: If FAILED, error info, otherwise empty
+        404:
+          description: No such task
+
+  /task/recface:
+    post:
+      summary: Отправить лицо на распознавание
+      operationId: addFaceRecTask
+      tags:
+        - FaceRecognition
+        - TaskCreator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                face:
+                  type: string
+                  description: Base85 of file
+      responses:
+        202:
+          description: Обьект успешно принят на обработку
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: ID запроса на добавление, по которому можно получить результат
+
+  /task/recface/{taskId}:
+    get:
+      summary: Получить статус запроса на добавление
+      operationId: getFaceRecTaskStatus
+      tags:
+        - FaceRecognition
+        - TaskManager
+      parameters:
+        - in: path
+          name: taskId
+          schema:
+            type: string
+          required: true
+          description: String ID of task to fetch information about
+      responses:
+        200:
+          description: Обьект найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  state:
+                    type: string
+                    enum: [PENDING, OK, FAILED]
+                  message:
+                    type: string
+                    description: If FAILED, error info, otherwise empty
+                  matches:
+                    type: array
+                    description: Matching faces if OK, otherwise empty
+                    items:
+                      $ref: "#/components/schemas/PersonInformation"
+        404:
+          description: No such task
+
+components:
+  schemas:
+    TraitInformation:
+      type: object
+      description: Information about one trait
+      properties:
+        name:
+          type: string
+        options:
+          type: array
+          description: Варианты трейта (например, несколько ссылок на разные страницы в одной соцсети)
+          items:
+            type: string
+
+    PersonInformation:
+      type: object
+      description: Информация о распознаном пользователе
+      properties:
+        probability:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+        traits:
+          type: array
+          items:
+            $ref: "#/components/schemas/TraitInformation"
