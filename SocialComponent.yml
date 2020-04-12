@@ -1,0 +1,67 @@
+openapi: 3.0.2
+info:
+  title: SocialComponent API
+  version: 0.0.1
+servers:
+  - url: social.keddad.wtf
+paths:
+  /parse/{networkTag}/{id}:
+    post:
+      summary: Добавить в БД инфорамцию о пользователе с ID в социальной сети networkTag
+      operationId: createTask
+      parameters:
+        - in: path
+          name: networkTag
+          schema:
+            type: string
+            enum: [VK, FB]
+          required: true
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: skipExisting
+          schema:
+            type: boolean
+            default: false
+          required: false
+          description: Пропускать ли те страницы, которые уже есть в БД
+      responses:
+        202:
+          description: Обьект успешно принят на обработку
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: ID запроса на добавление, по которому можно получить результат
+  /parse/{taskId}:
+    get:
+      summary: Получить статус запроса на добавление
+      operationId: getTaskStatus
+      parameters:
+        - in: path
+          name: taskId
+          schema:
+            type: string
+          required: true
+          description: String ID of task to fetch information about
+      responses:
+        200:
+          description: Обьект найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  state:
+                    type: string
+                    enum: [PENDING, OK, FAILED]
+                  message:
+                    type: string
+                    description: If FAILED, error info, otherwise empty
+        404:
+          description: No such task
+
+  
