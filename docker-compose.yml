@@ -12,6 +12,7 @@ services:
   ff_mongodb:
     restart: always
     image: mongo:latest
+    hostname: mongo
     environment:
       - AUTH=no
     ports: 
@@ -19,6 +20,7 @@ services:
   ff_rabbitmq:
     restart: always
     image: rabbitmq:alpine
+    hostname: rabbitmq
     ports: 
         - "5672:5672"
     environment: 
@@ -26,6 +28,7 @@ services:
         - RABBITMQ_DEFAULT_PASS=mysweetrabbit
   ff_redis:
     restart: always
+    hostname: redis
     image: redis:rc-alpine3.11
     environment:
         - REDIS_PASSWORD=mysweetredis
