@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: CoreComponent API
-  version: 0.0.1
+  version: 0.0.2
 servers:
   - url: core.keddad.wtf
 paths:
@@ -12,6 +12,13 @@ paths:
       tags:
         - TaskCreator
         - FaceAddition
+      parameters:
+        - in: query
+          name: append
+          schema:
+            type: boolean
+            default: true
+          description: Мержить ли трейты, если такое лицо уже есть в БД
       requestBody:
         content:
           application/json:
