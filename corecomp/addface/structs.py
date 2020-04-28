@@ -13,11 +13,11 @@ class Trait(BaseModel):
         return v
 
 
-class NewFaceToRabbit(BaseModel):
+class NewFaceToRedis(BaseModel):
     image_id: str
     task_id: str
     trait_id: str
-    append: bool
+    append: str
 
 
 class FaceAddBody(BaseModel):

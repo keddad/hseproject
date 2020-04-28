@@ -5,7 +5,6 @@ services:
     build: ./corecomp
     depends_on:
       - ff_mongodb
-      - ff_rabbitmq
       - ff_redis
     ports:
       - "80:80"
@@ -16,14 +15,6 @@ services:
       - AUTH=no
     ports:
       - "27017:27017"
-  ff_rabbitmq:
-    restart: always
-    image: rabbitmq:alpine
-    ports:
-      - "5672:5672"
-    environment:
-      - RABBITMQ_DEFAULT_USER=user
-      - RABBITMQ_DEFAULT_PASS=mysweetrabbit
   ff_redis:
     restart: always
     image: redis:rc-alpine3.11

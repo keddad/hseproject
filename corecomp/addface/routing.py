@@ -3,7 +3,6 @@ from fastapi.responses import PlainTextResponse
 from .structs import *
 from utils.mongodb import get_mongo_client
 from utils.redis import get_redis_client
-from utils.rabbitmq import get_rabbitmq_channel
 from motor.motor_asyncio import AsyncIOMotorGridFSBucket
 from base64 import b85decode
 from uuid import uuid4
@@ -19,7 +18,6 @@ addface_router = APIRouter()
 async def new_addface(req: FaceAddBody, append_face: bool = True):
     mongo_client = await get_mongo_client()
     redis_client = await get_redis_client()
-    rabbit_channel = await get_rabbitmq_channel()
     logging.debug("Got all the BD drivers")
 
     image_bucket = AsyncIOMotorGridFSBucket(mongo_client.image_cache)
@@ -47,18 +45,14 @@ async def new_addface(req: FaceAddBody, append_face: bool = True):
 
     await redis_client.set(task_id, "PENDING")
 
-    logging.debug("Put task to redis")
+    logging.debug("Put task state to redis")
 
-    await rabbit_channel.default_exchange.publish(
-        Message(
-            body=str(
-                NewFaceToRabbit(image_id=str(image_id), task_id=task_id, trait_id=str(trait_id.inserted_id),
-                                append=append_face).dict()).encode()
-        ),
-        routing_key="addface"
-    )
+    await redis_client.xadd("corecomp.addface",
+                            NewFaceToRedis(image_id=str(image_id), task_id=task_id,
+                                           trait_id=str(trait_id.inserted_id),
+                                           append=str(append_face)).dict())
 
-    logging.debug("Put task to rabbitmq")
+    logging.debug(f"Put task to redis stream")
 
     return task_id
 
