@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   ff_corecomp:
     restart: always
@@ -7,28 +7,25 @@ services:
       - ff_mongodb
       - ff_rabbitmq
       - ff_redis
-    ports: 
+    ports:
       - "80:80"
   ff_mongodb:
     restart: always
     image: mongo:latest
-    hostname: mongo
     environment:
       - AUTH=no
-    ports: 
-        - "27017:27017"
+    ports:
+      - "27017:27017"
   ff_rabbitmq:
     restart: always
     image: rabbitmq:alpine
-    hostname: rabbitmq
-    ports: 
-        - "5672:5672"
-    environment: 
-        - RABBITMQ_DEFAULT_USER=user
-        - RABBITMQ_DEFAULT_PASS=mysweetrabbit
+    ports:
+      - "5672:5672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=mysweetrabbit
   ff_redis:
     restart: always
-    hostname: redis
     image: redis:rc-alpine3.11
-    environment:
-        - REDIS_PASSWORD=mysweetredis
+    ports:
+      - "6379:6379"
