@@ -10,7 +10,7 @@ db = Database()
 
 
 async def connect_to_rabbitmq():
-    db.client = connect("amqp://user:mysweetrabbit@rabbitq")
+    db.client = await connect("amqp://user:mysweetrabbit@ff_rabbitmq")
 
 
 async def close_rabbitmq_connection():

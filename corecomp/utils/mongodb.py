@@ -9,7 +9,7 @@ db = Database()
 
 
 async def connect_to_mongo():
-    db.client = AsyncIOMotorClient("mongo:27017")
+    db.client = AsyncIOMotorClient("mongodb://ff_mongodb:27017")
 
 
 async def close_mongo_connection():

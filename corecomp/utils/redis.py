@@ -1,15 +1,15 @@
-from aioredis import create_redis_pool, ConnectionsPool
+from aioredis import create_redis_pool, Redis, RedisConnection
 
 
 class Database:
-    client: ConnectionsPool = None
+    client: Redis = None
 
 
 db = Database()
 
 
 async def connect_to_redis():
-    db.client = create_redis_pool("redis://localhost", password="mysweetredis")
+    db.client = await create_redis_pool("redis://ff_redis")
 
 
 async def close_redis_connection():
@@ -17,5 +17,5 @@ async def close_redis_connection():
     await db.client.wait_closed()
 
 
-async def get_redis_client() -> ConnectionsPool:
+async def get_redis_client() -> Redis:
     return db.client
