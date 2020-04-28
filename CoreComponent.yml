@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: CoreComponent API
-  version: 0.0.2
+  version: 0.0.3
 servers:
   - url: core.keddad.wtf
 paths:
@@ -14,7 +14,7 @@ paths:
         - FaceAddition
       parameters:
         - in: query
-          name: append
+          name: append_face
           schema:
             type: boolean
             default: true
