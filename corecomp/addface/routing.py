@@ -6,7 +6,6 @@ from utils.redis import get_redis_client
 from motor.motor_asyncio import AsyncIOMotorGridFSBucket
 from base64 import b85decode
 from uuid import uuid4
-from aio_pika import Message
 import binascii
 from utils.utils import image_valid
 import logging
@@ -50,7 +49,7 @@ async def new_addface(req: FaceAddBody, append_face: bool = True):
     await redis_client.xadd("corecomp.addface",
                             NewFaceToRedis(image_id=str(image_id), task_id=task_id,
                                            trait_id=str(trait_id.inserted_id),
-                                           append=str(append_face)).dict())
+                                           append=(1 if append_face else 0)).dict())
 
     logging.debug(f"Put task to redis stream")
 
@@ -72,8 +71,8 @@ async def get_addface_result(task_id: str):
     logging.debug(f"{res_arr} is a res of get_addface_res for {task_id}")
 
     if len(res_arr) > 1:
-        return FaceAddResult(message=res_arr[1], state=FaceAddState(res_arr[0]))
+        return FaceAddResult(message=res_arr[1], state=TaskState(res_arr[0]))
 
     else:
         logging.debug("Got to status only reply on addface")
-        return FaceAddResult(state=FaceAddState(res_arr[0]))
+        return FaceAddResult(state=TaskState(res_arr[0]))
