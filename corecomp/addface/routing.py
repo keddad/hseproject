@@ -4,6 +4,7 @@ from .structs import *
 from utils.mongodb import get_mongo_client
 from utils.redis import get_redis_client
 from motor.motor_asyncio import AsyncIOMotorGridFSBucket
+from bson.objectid import ObjectId
 from base64 import b85decode
 from uuid import uuid4
 import binascii
@@ -33,22 +34,20 @@ async def new_addface(req: FaceAddBody, append_face: bool = True):
         raise HTTPException(status_code=400, detail="Image sent is not valid")
 
     task_id = uuid4().hex
-    image_id = await image_bucket.upload_from_stream(task_id, sent_image)
+    await image_bucket.upload_from_stream(task_id, sent_image)
 
     to_mongo = req.dict()
     to_mongo.pop("face", None)
-    trait_id = await mongo_client.caches.traits.insert_one(to_mongo)
+    to_mongo["_id"] = ObjectId(task_id)
 
-    logging.debug("Got image and trait id")
-    logging.debug(f"image_id:{image_id}, trait_id:{trait_id}")
+    await mongo_client.caches.traits.insert_one(to_mongo)
 
     await redis_client.set(task_id, "PENDING")
 
     logging.debug("Put task state to redis")
 
     await redis_client.xadd("corecomp.addface",
-                            NewFaceToRedis(image_id=str(image_id), task_id=task_id,
-                                           trait_id=str(trait_id.inserted_id),
+                            NewFaceToRedis(task_id=task_id,
                                            append=(1 if append_face else 0)).dict())
 
     logging.debug(f"Put task to redis stream")

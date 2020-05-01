@@ -4,9 +4,7 @@ from utils.structs import Trait, TaskState
 
 
 class NewFaceToRedis(BaseModel):
-    image_id: str
     task_id: str
-    trait_id: str
     append: int
 
 
