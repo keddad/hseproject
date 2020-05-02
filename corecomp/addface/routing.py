@@ -63,9 +63,14 @@ async def get_addface_result(task_id: str):
         raise HTTPException(status_code=404, detail="No such task")
 
     result = await redis_client.get(task_id)
+
     res_arr = result.split()
 
     res_arr = list(map(lambda x: x.decode(), res_arr))
+
+    if TaskState(res_arr[0]) == TaskState.ok:
+        await redis_client.dump(task_id)
+        logging.debug(f"Dumped {task_id}")
 
     logging.debug(f"{res_arr} is a res of get_addface_res for {task_id}")
 
