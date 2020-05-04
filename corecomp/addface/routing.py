@@ -68,7 +68,7 @@ async def get_addface_result(task_id: str):
 
     res_arr = list(map(lambda x: x.decode(), res_arr))
 
-    if TaskState(res_arr[0]) == TaskState.ok:
+    if TaskState(res_arr[0]) in (TaskState.ok, TaskState.failed):
         await redis_client.dump(task_id)
         logging.debug(f"Dumped {task_id}")
 
