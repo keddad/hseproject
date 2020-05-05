@@ -3,7 +3,7 @@ info:
   title: CoreComponent API
   version: 0.0.3
 servers:
-  - url: core.keddad.wtf
+  - url: keddad.wtf
 paths:
   /task/addface:
     post:

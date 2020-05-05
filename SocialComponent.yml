@@ -1,9 +1,9 @@
 openapi: 3.0.2
 info:
   title: SocialComponent API
-  version: 0.0.1
+  version: 0.0.2
 servers:
-  - url: social.keddad.wtf
+  - url: keddad.wtf
 paths:
   /parse/{networkTag}/{id}:
     post:
@@ -22,7 +22,7 @@ paths:
             type: string
           required: true
         - in: query
-          name: skipExisting
+          name: append_face
           schema:
             type: boolean
             default: false
@@ -32,10 +32,12 @@ paths:
         202:
           description: Обьект успешно принят на обработку
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                description: ID запроса на добавление, по которому можно получить результат
+                type: array
+                items:
+                  type: string
+                description: ID запросов на добавление, по которым можно получить результат
   /parse/{taskId}:
     get:
       summary: Получить статус запроса на добавление
