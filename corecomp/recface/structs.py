@@ -9,7 +9,7 @@ class FaceRecRequest(BaseModel):
 
 class PersonInformation(BaseModel):
     probability: float
-    traits: List
+    traits: List[Trait]
 
 
 class NewTaskToRedis(BaseModel):

@@ -64,9 +64,7 @@ async def get_addface_result(task_id: str):
 
     result = await redis_client.get(task_id)
 
-    res_arr = result.split()
-
-    res_arr = list(map(lambda x: x.decode(), res_arr))
+    res_arr = result.decode().split()
 
     if TaskState(res_arr[0]) in (TaskState.ok, TaskState.failed):
         await redis_client.dump(task_id)

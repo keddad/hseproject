@@ -45,6 +45,31 @@ async def new_recface(req: FaceRecRequest):
 
 
 @recface_router.get("/recface/{task_id}", response_model=FaceRecResult)
-async def get_recface_result(
-        task_id: str):  # Напишу, когда допишу воркера; Все равно придется решать конфликты формата возврата в могну
-    pass
+async def get_recface_result(task_id: str):
+    redis_client = await get_redis_client()
+    mongo_client = await get_mongo_client()
+
+    if await redis_client.exists(task_id) == 0:
+        raise HTTPException(status_code=404, detail="No such task")
+
+    result = await redis_client.get(task_id)
+
+    res_arr = result.decode().split()
+
+    if len(res_arr) == 1:
+        res_arr.append("")
+
+    state = TaskState(res_arr[0])
+
+    if state in (TaskState.ok, TaskState.failed):
+        await redis_client.dump(task_id)
+        logging.debug(f"Dumped {task_id}")
+
+    if state == TaskState.pending:
+        return FaceRecResult(state=state)
+    elif state == TaskState.failed:
+        return FaceRecResult(state=state, message=res_arr[1])
+    else:
+        resp = mongo_client.recface_resp_cache.find_one({"_id": task_id})
+        del resp["_id"]
+        return FaceRecResult(state=state, matches=[PersonInformation(**x) for x in resp])
