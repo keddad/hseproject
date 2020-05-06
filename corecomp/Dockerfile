@@ -3,9 +3,11 @@ FROM python:3.8.2-slim-buster
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-COPY ./req.txt .
+RUN pip install pipenv
 
-RUN pip install -r req.txt
+COPY Pipfile Pipfile.lock ./
+
+RUN pipenv install --system --deploy
 
 COPY . .
 
