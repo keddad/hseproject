@@ -6,8 +6,6 @@ services:
     depends_on:
       - ff_mongodb
       - ff_redis
-    ports:
-      - "80:80"
   ff_mongodb:
     restart: always
     image: mongo:latest
@@ -20,3 +18,14 @@ services:
     image: redis:rc-alpine3.11
     ports:
       - "6379:6379"
+  ff_nginx:
+    restart: always
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on: 
+      - ff_corecomp
+    volumes: 
+      - ./nginx.conf:/etc/nginx/nginx.conf
+

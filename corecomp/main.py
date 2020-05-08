@@ -5,11 +5,10 @@ import logging
 from time import sleep
 from addface.routing import addface_router
 from recface.routing import recface_router
+from social.routing import social_router
 
 app = FastAPI()
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)-15s %(message)s")
-
-sleep(10)  # Wait for all the databases to startup
 
 
 @app.get("/isalive")
@@ -25,12 +24,15 @@ app.add_event_handler("shutdown", close_redis_connection)
 
 app.include_router(
     addface_router,
-    prefix="/task"
+    prefix="/api/task"
 )
 
 app.include_router(
     recface_router,
-    prefix="/task"
+    prefix="/api/task"
 )
 
-logging.info("Corecomp up and running")
+app.include_router(
+    social_router,
+    prefix="/api/parse"
+)
