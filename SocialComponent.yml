@@ -32,12 +32,10 @@ paths:
         202:
           description: Обьект успешно принят на обработку
           content:
-            application/json:
+            text/plain:
               schema:
-                type: array
-                items:
-                  type: string
-                description: ID запросов на добавление, по которым можно получить результат
+                type: string
+                description: ID запроса на добавление, по которому можно получить результат
   /parse/{taskId}:
     get:
       summary: Получить статус запроса на добавление
