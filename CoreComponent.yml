@@ -5,7 +5,7 @@ info:
 servers:
   - url: keddad.wtf
 paths:
-  /task/addface:
+  /api/task/addface:
     post:
       summary: Отправить лицо на добавление. На фото должно быть только одно лицо
       operationId: addFaceTask
@@ -41,7 +41,7 @@ paths:
                 type: string
                 description: ID запроса на добавление, по которому можно получить результат
 
-  /task/addface/{taskId}:
+  /api/task/addface/{taskId}:
     get:
       summary: Получить статус запроса на добавление
       operationId: getFaceTaskStatus
@@ -72,7 +72,7 @@ paths:
         404:
           description: No such task
 
-  /task/recface:
+  /api/task/recface:
     post:
       summary: Отправить лицо на распознавание
       operationId: addFaceRecTask
@@ -97,7 +97,7 @@ paths:
                 type: string
                 description: ID запроса на добавление, по которому можно получить результат
 
-  /task/recface/{taskId}:
+  /api/task/recface/{taskId}:
     get:
       summary: Получить статус запроса на добавление
       operationId: getFaceRecTaskStatus
