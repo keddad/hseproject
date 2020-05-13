@@ -36,7 +36,8 @@ FindLyco
 
 ### [ Инструменты разработки ]
 
-* GoLand/Golang
+* PyCharm/Python
+* CLion/C++
 * Docker
 
 ### [ Этапы разработки ]
