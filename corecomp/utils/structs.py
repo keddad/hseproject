@@ -17,3 +17,11 @@ class TaskState(str, Enum):
     pending = "PENDING"
     failed = "FAILED"
     ok = "OK"
+
+    def __str__(self):
+        return str(self.value)
+
+
+class DefaultResult(BaseModel):
+    message: str = ""
+    state: TaskState

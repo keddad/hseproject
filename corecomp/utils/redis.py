@@ -1,4 +1,5 @@
-from aioredis import create_redis_pool, Redis, RedisConnection
+from aioredis import create_redis_pool, Redis
+import logging
 
 
 class Database:
@@ -18,4 +19,5 @@ async def close_redis_connection():
 
 
 async def get_redis_client() -> Redis:
+    logging.debug("Dispatched redis connection")
     return db.client

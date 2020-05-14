@@ -3,6 +3,7 @@ from fastapi.responses import PlainTextResponse
 from .structs import *
 from utils.mongodb import get_mongo_client
 from utils.redis import get_redis_client
+from utils.structs import DefaultResult
 from motor.motor_asyncio import AsyncIOMotorGridFSBucket
 from bson.objectid import ObjectId
 from base64 import b85decode
@@ -55,7 +56,7 @@ async def new_addface(req: FaceAddBody, append_face: bool = True):
     return task_id
 
 
-@addface_router.get("/addface/{task_id}", response_model=FaceAddResult)
+@addface_router.get("/addface/{task_id}", response_model=DefaultResult)
 async def get_addface_result(task_id: str):
     redis_client = await get_redis_client()
 
@@ -65,16 +66,12 @@ async def get_addface_result(task_id: str):
     result = await redis_client.get(task_id)
 
     res_arr = result.decode().split()
+    state = TaskState(res_arr[0])
 
-    if TaskState(res_arr[0]) in (TaskState.ok, TaskState.failed):
+    if state in (TaskState.ok, TaskState.failed):
         await redis_client.dump(task_id)
         logging.debug(f"Dumped {task_id}")
 
     logging.debug(f"{res_arr} is a res of get_addface_res for {task_id}")
 
-    if len(res_arr) > 1:
-        return FaceAddResult(message=res_arr[1], state=TaskState(res_arr[0]))
-
-    else:
-        logging.debug("Got to status only reply on addface")
-        return FaceAddResult(state=TaskState(res_arr[0]))
+    return DefaultResult(state=state, message=res_arr[1] if len(res_arr) > 1 else "")

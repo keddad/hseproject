@@ -65,11 +65,10 @@ async def get_recface_result(task_id: str):
         await redis_client.dump(task_id)
         logging.debug(f"Dumped {task_id}")
 
-    if state == TaskState.pending:
-        return FaceRecResult(state=state)
-    elif state == TaskState.failed:
-        return FaceRecResult(state=state, message=res_arr[1])
+    if state in (TaskState.pending, TaskState.failed):
+        return FaceRecResult(state=state, message=res_arr[1] if len(res_arr) > 1 else "")
     else:
         resp = mongo_client.recface_resp_cache.find_one({"_id": task_id})
         del resp["_id"]
+        await mongo_client.recface_resp_cache.delete_one({"_id": task_id})
         return FaceRecResult(state=state, matches=[PersonInformation(**x) for x in resp])

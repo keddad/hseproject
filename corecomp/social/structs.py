@@ -7,9 +7,11 @@ class SocialNetwork(str, Enum):
     fb = "FB"
     ok = "OK"
 
+    def __str__(self):
+        return str(self.value)
+
 
 class TaskToRedis(BaseModel):
     network: str
     id: str
     append_face: int
-

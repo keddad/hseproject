@@ -17,7 +17,3 @@ class FaceAddBody(BaseModel):
         assert len(v) > 0
         return v
 
-
-class FaceAddResult(BaseModel):
-    message: str = ""
-    state: TaskState
