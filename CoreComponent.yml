@@ -33,13 +33,13 @@ paths:
                   items:
                     $ref: "#/components/schemas/TraitInformation"
       responses:
-        202:
+        201:
           description: Обьект успешно принят на обработку
-          content:
-            text/plain:
+          headers:
+            Location:
               schema:
                 type: string
-                description: ID запроса на добавление, по которому можно получить результат
+              description: Path to fetch information about object
 
   /api/task/addface/{taskId}:
     get:
@@ -89,13 +89,14 @@ paths:
                   type: string
                   description: Base85 of file
       responses:
-        202:
+        201:
           description: Обьект успешно принят на обработку
           content:
-            text/plain:
+          headers:
+            Location:
               schema:
                 type: string
-                description: ID запроса на добавление, по которому можно получить результат
+              description: Path to fetch information about object
 
   /api/task/recface/{taskId}:
     get:
