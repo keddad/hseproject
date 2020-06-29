@@ -14,7 +14,7 @@ paths:
           name: append_face
           schema:
             type: boolean
-            default: true
+            default: false
           description: Мержить ли трейты, если такое лицо уже есть в БД
       requestBody:
         content:

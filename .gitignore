@@ -126,6 +126,7 @@ dmypy.json
 **/.idea/*
 **/.code/*
 
+**/.*
 .*
 
 !/.gitignore
