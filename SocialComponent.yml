@@ -29,40 +29,5 @@ paths:
           required: false
           description: Пропускать ли те страницы, которые уже есть в БД
       responses:
-        201:
-          description: Обьект успешно принят на обработку
-          headers:
-            Location:
-              schema:
-                type: string
-              description: Path to fetch information about object
-
-  /api/parse/{taskId}:
-    get:
-      summary: Получить статус запроса на добавление
-      operationId: getTaskStatus
-      parameters:
-        - in: path
-          name: taskId
-          schema:
-            type: string
-          required: true
-          description: String ID of task to fetch information about
-      responses:
         200:
-          description: Обьект найден
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  state:
-                    type: string
-                    enum: [PENDING, OK, FAILED]
-                  message:
-                    type: string
-                    description: If FAILED, error info, otherwise empty
-        404:
-          description: No such task
-
-  
+          description: Обьект успешно принят на обработку

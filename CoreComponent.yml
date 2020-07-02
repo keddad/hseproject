@@ -5,7 +5,7 @@ info:
 servers:
   - url: keddad.wtf
 paths:
-  /api/task/addface:
+  /api/core/addface:
     post:
       summary: Отправить лицо на добавление. На фото должно быть только одно лицо
       operationId: addFaceTask
@@ -30,16 +30,12 @@ paths:
                   items:
                     $ref: "#/components/schemas/TraitInformation"
       responses:
-        201:
+        200:
           description: Обьект успешно принят на обработку
-          headers:
-            Location:
-              schema:
-                type: string
-              description: Path to fetch information about object
+          
 
-  /api/task/recface:
-    post:
+  /api/core/recface:
+    get:
       summary: Отправить лицо на распознавание
       operationId: addFaceRecTask
       requestBody:
@@ -65,6 +61,34 @@ paths:
                     items:
                       $ref: "#/components/schemas/PersonInformation"
 
+  /api/core/recvec:
+    get:
+      summary: Отправить вектор на распознавание
+      operationId: addVecRecTask
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                face:
+                  type: array
+                  description: Вектор фич
+                  items:
+                    type: number
+      responses:
+        200:
+          description: Запрос выполнен успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  matches:
+                    type: array
+                    description: Matching faces if OK, otherwise empty
+                    items:
+                      $ref: "#/components/schemas/PersonInformation"
 
 components:
   schemas:
