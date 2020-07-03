@@ -26,13 +26,14 @@ paths:
                   type: string
                   description: Base85 of file
                 traits:
-                  type: array
-                  items:
-                    $ref: "#/components/schemas/TraitInformation"
+                  type: object
+                  additionalProperties:
+                    type: array
+                    items:
+                      type: string
       responses:
         200:
           description: Обьект успешно принят на обработку
-          
 
   /api/core/recface:
     get:
@@ -92,23 +93,15 @@ paths:
 
 components:
   schemas:
-    TraitInformation:
-      type: object
-      description: Information about one trait
-      properties:
-        name:
-          type: string
-        options:
-          type: array
-          description: Варианты трейта (например, несколько ссылок на разные страницы в одной соцсети)
-          items:
-            type: string
-
     PersonInformation:
       type: object
       description: Информация о распознаном пользователе
       properties:
+        probability:
+          type: number
         traits:
-          type: array
-          items:
-            $ref: "#/components/schemas/TraitInformation"
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
