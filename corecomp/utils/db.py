@@ -1,13 +1,15 @@
 import asyncpg
 
-pool = None
+class Database:
+    pool: asyncpg.pool.Pool = None
 
+db = Database()
 
 async def init_pool():
-    pool = await asyncpg.create_pool(
+    db.pool = await asyncpg.create_pool(
         dsn="postgres://postgres:pass@ff_postgres:5432/")
 
-    async with pool.acquire() as con:
+    async with db.pool.acquire() as con:
         await con.execute(
             '''
             CREATE EXTENSION IF NOT EXISTS cube;

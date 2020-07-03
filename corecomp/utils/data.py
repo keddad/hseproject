@@ -1,15 +1,11 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Dict
 
-
-class Trait(BaseModel):
-    name: str
-    options: List[str]
 
 
 class FaceAddRequest(BaseModel):
     face: str
-    options: List[Trait]
+    traits: Dict[str, List[str]]
 
 
 class FaceRecRequest(BaseModel):
@@ -20,8 +16,8 @@ class VecRecRequest(BaseModel):
     face: List[float]
 
 
-class PersonInformation(BaseException):
-    traits: List[Trait]
+class PersonInformation(BaseModel):
+    traits: Dict[str, List[str]]
 
 
 class FaceRecResponce(BaseModel):
