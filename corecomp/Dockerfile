@@ -1,5 +1,7 @@
 FROM python:3.8
 
+ENV WEB_CONCURRENCY 4
+
 RUN pip install poetry
 
 COPY poetry.lock pyproject.toml ./
@@ -14,4 +16,4 @@ RUN apt-get clean
 
 COPY . ./
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "3800"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "3800", "--ws", "none", "--proxy-headers"]

@@ -1,12 +1,13 @@
 from typing import Optional
 from utils.db import init_pool
 from fastapi import FastAPI
+import logging
 
 from router.rec import router as rec_router
 from router.add import router as add_router
 
 app = FastAPI()
-
+logging.basicConfig(level=logging.DEBUG, format='%(relativeCreated)6d %(threadName)s %(message)s')
 
 @app.on_event("startup")
 async def startup():

@@ -18,6 +18,7 @@ class VecRecRequest(BaseModel):
 
 class PersonInformation(BaseModel):
     traits: Dict[str, List[str]]
+    probability: float
 
 
 class FaceRecResponce(BaseModel):

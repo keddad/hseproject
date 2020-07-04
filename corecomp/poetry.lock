@@ -230,6 +230,17 @@ toml = ">=0.7.1"
 
 [[package]]
 category = "dev"
+description = "a python refactoring library..."
+name = "rope"
+optional = false
+python-versions = "*"
+version = "0.17.0"
+
+[package.extras]
+dev = ["pytest"]
+
+[[package]]
+category = "dev"
 description = "Python 2 and 3 compatibility utilities"
 name = "six"
 optional = false
@@ -323,7 +334,7 @@ python-versions = "*"
 version = "1.12.1"
 
 [metadata]
-content-hash = "0a3b4bda1fd8a9734c47ba663675a99b914233333b05e8d793278bf3885ec1b0"
+content-hash = "7dea0fc6ad9d753e33f8bbb157fe11864da71e44a0d59b77db5133fd0be238fb"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -527,6 +538,9 @@ pydantic = [
 pylint = [
     {file = "pylint-2.5.3-py3-none-any.whl", hash = "sha256:d0ece7d223fe422088b0e8f13fa0a1e8eb745ebffcb8ed53d3e95394b6101a1c"},
     {file = "pylint-2.5.3.tar.gz", hash = "sha256:7dd78437f2d8d019717dbf287772d0b2dbdfd13fc016aa7faa08d67bccc46adc"},
+]
+rope = [
+    {file = "rope-0.17.0.tar.gz", hash = "sha256:658ad6705f43dcf3d6df379da9486529cf30e02d9ea14c5682aa80eb33b649e1"},
 ]
 six = [
     {file = "six-1.15.0-py2.py3-none-any.whl", hash = "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"},

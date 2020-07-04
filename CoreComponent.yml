@@ -54,13 +54,11 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  matches:
-                    type: array
-                    description: Matching faces if OK, otherwise empty
-                    items:
-                      $ref: "#/components/schemas/PersonInformation"
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/PersonInformation"
 
   /api/core/recvec:
     get:
@@ -83,13 +81,11 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  matches:
-                    type: array
-                    description: Matching faces if OK, otherwise empty
-                    items:
-                      $ref: "#/components/schemas/PersonInformation"
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/PersonInformation"
 
 components:
   schemas:
