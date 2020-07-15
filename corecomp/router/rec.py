@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from utils.data import FaceRecRequest, PersonInformation, FaceRecResponce, VecRecRequest
 from utils.db import db
 from base64 import b85decode
@@ -35,6 +35,9 @@ async def recface(req: FaceRecRequest):
 
     features = face_recognition.face_encodings(face)
 
+    if len(features) == 0:
+        raise HTTPException(status_code=400, detail="No faces found on image")
+
     raw_res = []
 
     async with db.pool.acquire() as conn:
@@ -48,7 +51,6 @@ async def recface(req: FaceRecRequest):
         for vec in features:
             vec_matches = await conn.fetch(SEARCH_QUERY, vec[0:64], vec[64:128])
             raw_res.append(vec_matches)
-
 
     for i in range(0, len(raw_res)):
         for j in range(0, len(raw_res[i])):
