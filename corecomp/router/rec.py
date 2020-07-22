@@ -1,11 +1,16 @@
-from fastapi import APIRouter, HTTPException
-from utils.data import FaceRecRequest, PersonInformation, FaceRecResponce, VecRecRequest
-from utils.db import db
 from base64 import b85decode
+from binascii import Error as BaseDecodeError
+from io import BytesIO
+from typing import List
+
 import face_recognition
 import ujson
-from typing import List
-from io import BytesIO
+from loguru import logger
+from PIL import UnidentifiedImageError
+from fastapi import APIRouter, HTTPException
+
+from utils.data import FaceRecRequest, PersonInformation, FaceRecResponce, VecRecRequest
+from utils.db import db
 
 router = APIRouter()
 
@@ -27,15 +32,23 @@ SEARCH_QUERY = '''
 
 @router.get("/recface/", response_model=List[FaceRecResponce])
 async def recface(req: FaceRecRequest):
-    face = face_recognition.load_image_file(
-        BytesIO(
-            b85decode(req.face)
+    try:
+        face = face_recognition.load_image_file(
+            BytesIO(
+                b85decode(req.face)
+            )
         )
-    )
+    except BaseDecodeError:
+        logger.warning("Recface request failed, unable to decode Base85")
+        raise HTTPException(status_code=400, detail="Can't decode Base85")
+    except UnidentifiedImageError:
+        logger.warning("Recface request failed, unable to read image")
+        raise HTTPException(status_code=400, detail="Broken image file")
 
     features = face_recognition.face_encodings(face)
 
     if len(features) == 0:
+        logger.warning("Recface request failed, no faces found on image")
         raise HTTPException(status_code=400, detail="No faces found on image")
 
     raw_res = []

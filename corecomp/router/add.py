@@ -1,25 +1,38 @@
+from base64 import b85decode
+from io import BytesIO
+from binascii import Error as BaseDecodeError
+from PIL import UnidentifiedImageError
+
+import face_recognition
+from loguru import logger
+import ujson
 from fastapi import APIRouter, HTTPException
+
 from utils.data import FaceAddRequest
 from utils.db import db
-from base64 import b85decode
-import face_recognition
-import ujson
-from io import BytesIO
 
 router = APIRouter()
 
 
 @router.post("/addface/", status_code=200)
 async def addface(req: FaceAddRequest):
-    face = face_recognition.load_image_file(
-        BytesIO(
-            b85decode(req.face)
+    try:
+        face = face_recognition.load_image_file(
+            BytesIO(
+                b85decode(req.face)
+            )
         )
-    )
+    except BaseDecodeError:
+        logger.warning("Addface request failed, unable to decode Base85")
+        raise HTTPException(status_code=400, detail="Can't decode Base85")
+    except UnidentifiedImageError:
+        logger.warning("Addface request failed, unable to read image")
+        raise HTTPException(status_code=400, detail="Broken image file")
 
     features = face_recognition.face_encodings(face)
 
     if len(features) == 0:
+        logger.warning("Addface request failed, no faces found on image")
         raise HTTPException(status_code=400, detail="No faces found on image")
 
     async with db.pool.acquire() as conn:

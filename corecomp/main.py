@@ -1,4 +1,4 @@
-from typing import Optional
+from loguru import logger
 from utils.db import init_pool
 from fastapi import FastAPI
 
@@ -26,3 +26,5 @@ app.include_router(
     add_router,
     prefix="/api/core"
 )
+
+logger.info("Corecomp up and running")

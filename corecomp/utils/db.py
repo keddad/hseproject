@@ -1,9 +1,13 @@
 import asyncpg
+from loguru import logger
+
 
 class Database:
     pool: asyncpg.pool.Pool = None
 
+
 db = Database()
+
 
 async def init_pool():
     db.pool = await asyncpg.create_pool(
@@ -20,3 +24,5 @@ async def init_pool():
             CREATE TABLE IF NOT EXISTS vector (id serial, traits json, vec_low cube, vec_high cube);
             '''
         )
+
+    logger.debug("Dispatched asyncpg pool")
