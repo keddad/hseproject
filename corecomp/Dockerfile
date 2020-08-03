@@ -2,15 +2,13 @@ FROM python:3.8
 
 ENV WEB_CONCURRENCY 4
 
-RUN pip install poetry
+RUN pip install pipenv
 
-COPY pyproject.toml ./
-
-RUN poetry export -f requirements.txt -o requirements.txt
+COPY Pipfile Pipfile.lock ./
 
 RUN apt-get update && apt-get install cmake -y
 
-RUN pip install -r requirements.txt
+RUN pipenv install --system
 
 RUN apt-get clean
 
