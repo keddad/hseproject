@@ -35,7 +35,7 @@ async def process(network: str, page_id: str):
             status_code=503, detail=f"Internal parser error, {str(e)}")
 
     async with aiohttp.ClientSession(json_serialize=ujson.dumps) as session:
-        async with session.post("http://ff_corecomp:3800",
+        async with session.post("http://ff_corecomp:3800/api/core/addface/",
                                 json={"face": b85encode(data.face).decode(), "traits": data.traits}) as req:
             if req.status != 200:
                 req_json = await req.json()
@@ -46,4 +46,4 @@ async def process(network: str, page_id: str):
 logger.info("Socialcomp up and running")
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8080) # To debug outside of container
+    uvicorn.run(app, host="0.0.0.0", port=8080)  # To debug outside of container
