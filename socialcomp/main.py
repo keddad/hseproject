@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from utils import BadID, ParsedData
 from parsers.vk import vk
+from parsers.ok import ok
 import aiohttp
 import ujson
 import uvicorn
@@ -10,7 +11,8 @@ from base64 import b85encode
 app = FastAPI()
 
 NETWORKS = {
-    "VK": vk
+    "VK": vk,
+    "OK": ok
 }
 
 

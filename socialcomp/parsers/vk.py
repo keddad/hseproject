@@ -9,7 +9,7 @@ BASE_LINK = "https://vk.com/{}"
 def _get_page_link(user_id: str) -> str:
     if user_id.isdigit():
         if int(user_id) <= 0:
-            raise ValueError
+            raise BadID
         page_link = BASE_LINK.format(f"id{user_id}")
     else:
         page_link = BASE_LINK.format(user_id)
