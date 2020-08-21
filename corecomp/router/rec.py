@@ -9,7 +9,7 @@ from loguru import logger
 from PIL import UnidentifiedImageError
 from fastapi import APIRouter, HTTPException
 
-from utils.data import FaceRecRequest, PersonInformation, FaceRecResponce, VecRecRequest
+from utils.data import FaceRecRequest, PersonInformation, FaceRecResponse, VecRecRequest
 from utils.db import db
 
 router = APIRouter()
@@ -30,7 +30,7 @@ SEARCH_QUERY = '''
             '''
 
 
-@router.get("/recface/", response_model=List[FaceRecResponce])
+@router.get("/recface/", response_model=List[FaceRecResponse])
 async def recface(req: FaceRecRequest):
     try:
         face = face_recognition.load_image_file(
@@ -70,10 +70,25 @@ async def recface(req: FaceRecRequest):
             raw_res[i][j] = PersonInformation(
                 traits=raw_res[i][j]["traits"], probability=raw_res[i][j]["probability"])
 
-    resp_list = list([FaceRecResponce(matches=x) for x in raw_res])
+    resp_list = list([FaceRecResponse(matches=x) for x in raw_res])
     return resp_list
 
 
-@router.get("/recvec/", response_model=FaceRecResponce)
+@router.get("/recvec/", response_model=FaceRecResponse)
 async def recvec(req: VecRecRequest):
-    pass
+    raw_res = []
+
+    async with db.pool.acquire() as conn:
+        await conn.set_type_codec(
+            'json',
+            encoder=ujson.dumps,
+            decoder=ujson.loads,
+            schema='pg_catalog'
+        )
+
+        vec_match = await conn.fetch(SEARCH_QUERY, req.face[0:64], req.face[64:128])
+
+    for s in vec_match:
+        raw_res.append(PersonInformation(traits=s["traits"], probability=s["probability"]))
+
+    return FaceRecResponse(matches=raw_res)

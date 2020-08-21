@@ -21,5 +21,5 @@ class PersonInformation(BaseModel):
     probability: float
 
 
-class FaceRecResponce(BaseModel):
+class FaceRecResponse(BaseModel):
     matches: List[PersonInformation]
