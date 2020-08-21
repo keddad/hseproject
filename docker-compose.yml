@@ -10,6 +10,11 @@ services:
     build: ./socialcomp
     depends_on:
         - ff_corecomp
+  ff_videocomp:
+    restart: always
+    build: ./videocomp
+    depends_on:
+        - ff_corecomp
   ff_postgres:
     restart: always
     image: "postgres"
