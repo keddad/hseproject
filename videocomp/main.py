@@ -15,7 +15,7 @@ app = FastAPI()
 THRESHOLD = 0.6
 
 
-@app.get("/api/video", response_model=VideoReqResp)
+@app.post("/api/video", response_model=VideoReqResp)
 async def process(vid: VideoMessage):
     try:
         decoded_vid = b85decode(vid.video)

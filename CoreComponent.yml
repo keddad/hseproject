@@ -36,7 +36,7 @@ paths:
           description: Обьект успешно принят на обработку
 
   /api/core/recface:
-    get:
+    post:
       summary: Отправить лицо на распознавание
       operationId: addFaceRecTask
       requestBody:
@@ -61,7 +61,7 @@ paths:
                     $ref: "#/components/schemas/PersonInformation"
 
   /api/core/recvec:
-    get:
+    post:
       summary: Отправить вектор на распознавание
       operationId: addVecRecTask
       requestBody:

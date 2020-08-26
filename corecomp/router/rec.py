@@ -30,7 +30,7 @@ SEARCH_QUERY = '''
             '''
 
 
-@router.get("/recface/", response_model=List[FaceRecResponse])
+@router.post("/recface/", response_model=List[FaceRecResponse])
 async def recface(req: FaceRecRequest):
     try:
         face = face_recognition.load_image_file(
@@ -74,7 +74,7 @@ async def recface(req: FaceRecRequest):
     return resp_list
 
 
-@router.get("/recvec/", response_model=FaceRecResponse)
+@router.post("/recvec/", response_model=FaceRecResponse)
 async def recvec(req: VecRecRequest):
     raw_res = []
 
