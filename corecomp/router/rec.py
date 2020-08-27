@@ -9,7 +9,7 @@ from loguru import logger
 from PIL import UnidentifiedImageError
 from fastapi import APIRouter, HTTPException
 
-from utils.data import FaceRecRequest, PersonInformation, FaceRecResponse, VecRecRequest
+from utils.data import FaceRecRequest, PersonInformation, VecRecRequest
 from utils.db import db
 
 router = APIRouter()
@@ -30,7 +30,7 @@ SEARCH_QUERY = '''
             '''
 
 
-@router.post("/recface/", response_model=List[FaceRecResponse])
+@router.post("/recface/", response_model=List[List[PersonInformation]])
 async def recface(req: FaceRecRequest):
     try:
         face = face_recognition.load_image_file(
@@ -38,7 +38,7 @@ async def recface(req: FaceRecRequest):
                 b85decode(req.face)
             )
         )
-    except BaseDecodeError:
+    except (BaseDecodeError, ValueError):
         logger.warning("Recface request failed, unable to decode Base85")
         raise HTTPException(status_code=400, detail="Can't decode Base85")
     except UnidentifiedImageError:
@@ -70,11 +70,10 @@ async def recface(req: FaceRecRequest):
             raw_res[i][j] = PersonInformation(
                 traits=raw_res[i][j]["traits"], probability=raw_res[i][j]["probability"])
 
-    resp_list = list([FaceRecResponse(matches=x) for x in raw_res])
-    return resp_list
+    return raw_res
 
 
-@router.post("/recvec/", response_model=FaceRecResponse)
+@router.post("/recvec/", response_model=List[PersonInformation])
 async def recvec(req: VecRecRequest):
     raw_res = []
 
@@ -91,4 +90,4 @@ async def recvec(req: VecRecRequest):
     for s in vec_match:
         raw_res.append(PersonInformation(traits=s["traits"], probability=s["probability"]))
 
-    return FaceRecResponse(matches=raw_res)
+    return [PersonInformation(x) for x in raw_res]
