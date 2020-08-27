@@ -5,7 +5,7 @@ info:
 servers:
   - url: keddad.wtf
 paths:
-  /api/social/parse/{networkTag}/{id}:
+  /api/parse/{networkTag}/{id}:
     post:
       summary: Добавить в БД инфорамцию о пользователе с ID в социальной сети networkTag
       operationId: createTask
