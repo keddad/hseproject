@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-const HelloMessage = "Привет! Отправь фото или видео, что бы я его обработал"
+const HelloMessage = "Привет! Отправь фото или видео, чтобы я его обработал"
 
 type RawMessage struct {
 	Message string
