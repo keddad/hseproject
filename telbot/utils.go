@@ -67,7 +67,7 @@ func ProcessPhotos(bot *tgbotapi.BotAPI, message *tgbotapi.Message, toPrinter ch
 		"face": Encode(photo),
 	})
 
-	resp, err := http.Post("http://localhost/api/core/recface", "application/json", bytes.NewBuffer(se))
+	resp, err := http.Post("http://ff_corecomp:3800/api/core/recface", "application/json", bytes.NewBuffer(se))
 	if err != nil {
 		panic(err)
 	}
