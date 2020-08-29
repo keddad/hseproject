@@ -92,3 +92,43 @@ func ProcessPhotos(bot *tgbotapi.BotAPI, message *tgbotapi.Message, toPrinter ch
 		toPrinter <- RawMessage{Message: msg, ChatId: message.Chat.ID, ReplyTo: message.MessageID}
 	}
 }
+
+func ProcessVideos(bot *tgbotapi.BotAPI, message *tgbotapi.Message, toPrinter chan<- RawMessage) {
+	photo := make([]byte, 0)
+
+	str, _ := bot.GetFileDirectURL(message.Video.FileID)
+
+	resp, _ := http.Get(str)
+	defer resp.Body.Close()
+
+	photo, _ = ioutil.ReadAll(resp.Body)
+
+	se, _ := json.Marshal(map[string]interface{}{
+		"video": Encode(photo),
+	})
+
+	resp, err := http.Post("http://ff_videocomp:3800/api/video", "application/json", bytes.NewBuffer(se))
+	if err != nil {
+		panic(err)
+	}
+
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	if resp.StatusCode != 200 {
+		return
+	}
+
+	defer resp.Body.Close()
+
+	coreResp := make([][]PhotoFaceResp, 0, 0)
+
+	err = json.Unmarshal(body, &coreResp)
+
+	if err != nil {
+		panic(err)
+	}
+
+	for _, msg := range CreateMessages(coreResp) {
+		toPrinter <- RawMessage{Message: msg, ChatId: message.Chat.ID, ReplyTo: message.MessageID}
+	}
+}

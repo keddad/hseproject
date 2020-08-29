@@ -20,6 +20,7 @@ services:
     build: ./telbot
     depends_on:
       - ff_corecomp
+      - ff_videocomp
     environment:
       - TOKEN=secret
   ff_postgres:

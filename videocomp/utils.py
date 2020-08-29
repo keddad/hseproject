@@ -11,13 +11,9 @@ class PersonInformation(BaseModel):
     traits: Dict[str, List[str]]
 
 
-class VideoReqResp(BaseModel):
-    matches: List[List[Dict]]
-
-
 async def get_matches_for_user(user: List[float]) -> List[PersonInformation]:
     async with aiohttp.ClientSession() as session:
-        async with session.get("http://ff_corecomp:3800/api/core/recvec", json={'face': user}) as resp:
+        async with session.post("http://ff_corecomp:3800/api/core/recvec", json={'face': user}) as resp:
             js = await resp.json()
             if resp.status != 200:
                 raise RuntimeError

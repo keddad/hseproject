@@ -90,4 +90,4 @@ async def recvec(req: VecRecRequest):
     for s in vec_match:
         raw_res.append(PersonInformation(traits=s["traits"], probability=s["probability"]))
 
-    return [PersonInformation(x) for x in raw_res]
+    return raw_res

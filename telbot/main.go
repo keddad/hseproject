@@ -42,6 +42,8 @@ func main() {
 			go ProcessPhotos(bot, update.Message, toPrinter)
 		}
 
-		// TODO: VideoComp integration
+		if update.Message.Video != nil {
+			go ProcessVideos(bot, update.Message, toPrinter)
+		}
 	}
 }

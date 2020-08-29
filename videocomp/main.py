@@ -15,7 +15,7 @@ app = FastAPI()
 THRESHOLD = 0.6
 
 
-@app.post("/api/video", response_model=VideoReqResp)
+@app.post("/api/video", response_model=List[List[Dict]])
 async def process(vid: VideoMessage):
     try:
         decoded_vid = b85decode(vid.video)
@@ -66,9 +66,9 @@ async def process(vid: VideoMessage):
         if isinstance(res, Exception):
             logger.warning(f"{res} while fetching corecomp answers")
             continue
-        output.append(res["matches"])
+        output.append(res)
 
-    return VideoReqResp(matches=output)
+    return output
 
 
 if __name__ == "__main__":
