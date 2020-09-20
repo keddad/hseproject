@@ -48,7 +48,14 @@ async def fetch_task(request: Request, tag):
     if tag not in cache:
         abort(404)
 
-    return text(f"{cache[tag].status} {cache[tag].output} {cache[tag].err}")
+    if cache[tag].status == TaskStatus.DONE:
+        template = env.get_template("result.html")
+        return html(template.render(data=cache[tag].output, round=round))
+    elif cache[tag].status == TaskStatus.PENDING:
+        template = env.get_template("pending.html")
+        return html(template.render())
+    else:
+        return text(f"{cache[tag].status} {cache[tag].output} {cache[tag].err}")
 
 
 @app.route('/', methods=["GET", "POST"])
