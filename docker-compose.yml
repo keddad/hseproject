@@ -22,7 +22,7 @@ services:
       - ff_corecomp
       - ff_videocomp
     environment:
-      - TOKEN=secret
+      - TOKEN=1399466852:AAEQx4VTO0LDOQLsoiZ-FyFYd87vKMGSkOs
   ff_postgres:
     restart: always
     image: "postgres"
@@ -39,3 +39,9 @@ services:
       - ff_socialcomp
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
+  ff_front:
+    restart: always
+    build: ./front
+    depends_on:
+      - ff_corecomp
+      - ff_videocomp
