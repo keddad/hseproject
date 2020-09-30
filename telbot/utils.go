@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"io/ioutil"
 	"net/http"
 	"strings"
+
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 const HelloMessage = "Привет! Отправь фото или видео, чтобы я его обработал"
@@ -56,9 +57,14 @@ func CreateMessages(el [][]PhotoFaceResp) []string {
 func ProcessPhotos(bot *tgbotapi.BotAPI, message *tgbotapi.Message, toPrinter chan<- RawMessage) {
 	photo := make([]byte, 0)
 
-	str, _ := bot.GetFileDirectURL((*message.Photo)[2].FileID)
+	str, _ := bot.GetFileDirectURL((*message.Photo)[len(*message.Photo)-1].FileID)
 
-	resp, _ := http.Get(str)
+	resp, err := http.Get(str)
+
+	if err != nil {
+		panic(err)
+	}
+
 	defer resp.Body.Close()
 
 	photo, _ = ioutil.ReadAll(resp.Body)
@@ -67,7 +73,7 @@ func ProcessPhotos(bot *tgbotapi.BotAPI, message *tgbotapi.Message, toPrinter ch
 		"face": Encode(photo),
 	})
 
-	resp, err := http.Post("http://ff_corecomp:3800/api/core/recface", "application/json", bytes.NewBuffer(se))
+	resp, err = http.Post("http://ff_corecomp:3800/api/core/recface", "application/json", bytes.NewBuffer(se))
 	if err != nil {
 		panic(err)
 	}
@@ -96,9 +102,18 @@ func ProcessPhotos(bot *tgbotapi.BotAPI, message *tgbotapi.Message, toPrinter ch
 func ProcessVideos(bot *tgbotapi.BotAPI, message *tgbotapi.Message, toPrinter chan<- RawMessage) {
 	photo := make([]byte, 0)
 
-	str, _ := bot.GetFileDirectURL(message.Video.FileID)
+	str, err := bot.GetFileDirectURL(message.Video.FileID)
 
-	resp, _ := http.Get(str)
+	if err != nil {
+		panic(err)
+	}
+
+	resp, err := http.Get(str)
+
+	if err != nil {
+		panic(err)
+	}
+
 	defer resp.Body.Close()
 
 	photo, _ = ioutil.ReadAll(resp.Body)
@@ -107,7 +122,7 @@ func ProcessVideos(bot *tgbotapi.BotAPI, message *tgbotapi.Message, toPrinter ch
 		"video": Encode(photo),
 	})
 
-	resp, err := http.Post("http://ff_videocomp:3800/api/video", "application/json", bytes.NewBuffer(se))
+	resp, err = http.Post("http://ff_videocomp:3800/api/video", "application/json", bytes.NewBuffer(se))
 	if err != nil {
 		panic(err)
 	}
