@@ -1,14 +1,16 @@
-from sanic import Sanic
-from sanic.request import Request
-from utils import *
-from base64 import b85encode
-from mmh3 import hash128
-import aiohttp
-from sanic.exceptions import abort
 import asyncio
+from base64 import b85encode
+
+import aiohttp
+from jinja2 import Environment, FileSystemLoader, select_autoescape
+from loguru import logger
+from mmh3 import hash128
+from sanic import Sanic
+from sanic.exceptions import abort
+from sanic.request import Request
 from sanic.response import html, redirect, text
 
-from jinja2 import Environment, FileSystemLoader, select_autoescape
+from utils import *
 
 env = Environment(
     loader=FileSystemLoader('./templates'),
@@ -22,9 +24,11 @@ async def process_task(task_id: int, is_video: bool, file: bytes):
     cache = GlobalCache()
 
     if is_video:
+        logger.debug(f"Video: {task_id}")
         file_key = "video"
         url = "http://ff_videocomp:3800/api/video"
     else:
+        logger.debug(f"Photo: {task_id}")
         file_key = "face"
         url = "http://ff_corecomp:3800/api/core/recface"
 
@@ -32,12 +36,11 @@ async def process_task(task_id: int, is_video: bool, file: bytes):
         async with session.post(url, json={file_key: b85encode(file).decode()}) as resp:
             if resp.status != 200:
                 cache[task_id].status = TaskStatus.ERR
-                cache[task_id].err = await resp.text()
+                cache[task_id].err = (await resp.json())["detail"]
+                logger.warning(f"Error for {cache[task_id]}")
             else:
                 cache[task_id].status = TaskStatus.DONE
                 cache[task_id].output = await resp.json()
-
-    print(cache[task_id])
 
 
 @app.route("/task/<tag>")
@@ -55,7 +58,8 @@ async def fetch_task(request: Request, tag):
         template = env.get_template("pending.html")
         return html(template.render())
     else:
-        return text(f"{cache[tag].status} {cache[tag].output} {cache[tag].err}")
+        template = env.get_template("error.html")
+        return html(template.render(err_text=cache[tag].err))
 
 
 @app.route('/', methods=["GET", "POST"])

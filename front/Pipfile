@@ -10,6 +10,8 @@ sanic = "*"
 aiohttp = "*"
 jinja2 = "*"
 murmurhash3 = "*"
+loguru = "*"
+autopep8 = "*"
 
 [requires]
 python_version = "3.8"

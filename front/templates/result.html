@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Your result</title>
 </head>
+
 <body>
     <h1>Results</h1>
     {% for  match in data %}
-        <h3>Person {{loop.index}}</h3>
-        <div>
+    <h3>Person {{loop.index}}</h3>
+    <div>
         {% for person in match %}
         <h4>{{person["traits"]["name"][0]}}</h4>
         <p>Probability: {{round(person["probability"], 4)}}</p>
-            <ul>
-                {% for key, value in person["traits"].items() %}
-                {% if key != "name" %}
-                <li>{{key}}: {{value[0]}}</li>
-                {% endif %}
-                {% endfor %}
-            </ul>
+        <ul>
+            {% for key, value in person["traits"].items() %}
+            {% if key != "name" %}
+            <li>{{key}}: {{value[0]}}</li>
+            {% endif %}
+            {% endfor %}
+        </ul>
         {% endfor %}
-        </div>
+    </div>
     {% endfor %}
 </body>
+
 </html>

@@ -18,6 +18,9 @@ class Task:
         self.err = ""
         self.output = []
 
+    def __str__(self):
+        return f"{self.status} {self.err} {self.output}"
+
 
 class GlobalCache:
     __cache = dict()
