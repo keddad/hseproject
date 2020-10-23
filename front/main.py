@@ -1,5 +1,8 @@
 import asyncio
+from pathlib import Path
 from base64 import b85encode
+import shutil
+from multiprocessing import Process, Queue
 
 import aiohttp
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -10,6 +13,7 @@ from sanic.exceptions import abort
 from sanic.request import Request
 from sanic.response import html, redirect, text
 
+from downloader import download_vid
 from utils import *
 
 env = Environment(
@@ -18,6 +22,27 @@ env = Environment(
 )
 
 app = Sanic(name="ff_front")
+download_q = Queue()
+
+wtf = False
+
+
+async def fetch_downloader():
+    cache = GlobalCache()
+    loop = asyncio.get_event_loop()
+    while True:
+        await asyncio.sleep(1)  
+        if not download_q.empty():
+            msg = download_q.get()
+
+            if msg[1] == True:
+                loop.create_task(process_task(
+                    msg[0], True, Path(msg[2]).read_bytes()))
+                logger.debug(f"Passed {msg[2]} to process_task")
+                shutil.rmtree(Path(msg[2]).parent)
+            else:
+                cache[msg[0]].status = TaskStatus.ERR
+                cache[msg[0]].err = msg[2]
 
 
 async def process_task(task_id: int, is_video: bool, file: bytes):
@@ -80,6 +105,28 @@ async def welcome(request: Request):
         loop.create_task(process_task(file_hash, "video" in mime, body))
 
         return redirect(f"./task/{file_hash}")
+
+
+@app.route('/vid', methods=["POST"])
+async def vid(request: Request):
+    task_cache = GlobalCache()
+    global wtf
+
+    if not wtf:
+        loop = asyncio.get_event_loop()
+        loop.create_task(fetch_downloader())
+        wtf = True
+
+    vid_url = request.form.get('url')
+    url_hash = hash128(vid_url)
+
+    task_cache[url_hash] = Task()
+
+    downloader_p = Process(target=download_vid, args=(
+        vid_url, download_q, url_hash))
+    downloader_p.start()
+
+    return redirect(f"./task/{url_hash}")
 
 
 if __name__ == '__main__':

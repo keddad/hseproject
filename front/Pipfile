@@ -12,6 +12,7 @@ jinja2 = "*"
 murmurhash3 = "*"
 loguru = "*"
 autopep8 = "*"
+youtube-dl = "*"
 
 [requires]
 python_version = "3.8"
