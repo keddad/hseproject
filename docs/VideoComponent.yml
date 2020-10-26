@@ -1,0 +1,47 @@
+openapi: 3.0.2
+info:
+  title: VideoComponent API
+  version: 1
+servers:
+  - url: keddad.wtf
+paths:
+  /api/video:
+    post:
+      summary: Отправить видео на распознавание
+      operationId: recVid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                video:
+                  type: string
+                  description: Base85 of file
+      responses:
+        200:
+          description: Запрос выполнен успешно
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/PersonInformation"
+        400:
+          description: Что то не так с видео
+components:
+  schemas:
+    PersonInformation:
+      type: object
+      description: Информация о распознаном пользователе
+      properties:
+        probability:
+          type: number
+        traits:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
