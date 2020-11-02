@@ -33,6 +33,3 @@ websockets = "*"
 yarl = "*"
 tldextract = "*"
 loguru = "*"
-
-[requires]
-python_version = "3.8"
