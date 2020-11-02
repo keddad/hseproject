@@ -81,6 +81,7 @@ func ProcessPhotos(bot *tgbotapi.BotAPI, message *tgbotapi.Message, toPrinter ch
 	body, _ := ioutil.ReadAll(resp.Body)
 
 	if resp.StatusCode != 200 {
+		toPrinter <- RawMessage{Message: "Мы не нашли лиц на изображении :(", ChatId: message.Chat.ID, ReplyTo: message.MessageID}
 		return
 	}
 
@@ -130,6 +131,7 @@ func ProcessVideos(bot *tgbotapi.BotAPI, message *tgbotapi.Message, toPrinter ch
 	body, _ := ioutil.ReadAll(resp.Body)
 
 	if resp.StatusCode != 200 {
+		toPrinter <- RawMessage{Message: "Мы не нашли лиц на изображении :(", ChatId: message.Chat.ID, ReplyTo: message.MessageID}
 		return
 	}
 
