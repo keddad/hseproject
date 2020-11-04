@@ -31,7 +31,7 @@ async def fetch_downloader():
     cache = GlobalCache()
     loop = asyncio.get_event_loop()
     while True:
-        await asyncio.sleep(1)  
+        await asyncio.sleep(1)
         if not download_q.empty():
             msg = download_q.get()
 
@@ -98,11 +98,14 @@ async def welcome(request: Request):
         body = request.files["file"][0].body
         mime = request.files["file"][0].type
 
-        file_hash = hash128(body)
-        cache[file_hash] = Task()
+        if body == b"":
+            return redirect("/")
 
-        loop = asyncio.get_event_loop()
-        loop.create_task(process_task(file_hash, "video" in mime, body))
+        file_hash = hash128(body)
+        if file_hash not in cache:
+            cache[file_hash] = Task()
+            loop = asyncio.get_event_loop()
+            loop.create_task(process_task(file_hash, "video" in mime, body))
 
         return redirect(f"./task/{file_hash}")
 
@@ -118,13 +121,23 @@ async def vid(request: Request):
         wtf = True
 
     vid_url = request.form.get('url')
+
+    if type(vid_url) is not str:
+        return redirect("/")
+
+    vid_url = vid_url.split("&")[0]
+
+    if vid_url.startswith("http"):
+        vid_url = vid_url.rstrip("https://").rstrip("http://")
+
     url_hash = hash128(vid_url)
 
-    task_cache[url_hash] = Task()
+    if url_hash not in task_cache:
+        task_cache[url_hash] = Task()
 
-    downloader_p = Process(target=download_vid, args=(
-        vid_url, download_q, url_hash))
-    downloader_p.start()
+        downloader_p = Process(target=download_vid, args=(
+            vid_url, download_q, url_hash))
+        downloader_p.start()
 
     return redirect(f"./task/{url_hash}")
 
